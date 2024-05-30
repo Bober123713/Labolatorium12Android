@@ -10,4 +10,6 @@
     <string name="wpisz_liczb_ocen_5_15">Wpisz liczbę ocen (5-15)</string>
     <string name="oceny">Oceny</string>
     <string name="lizba_ocen">"Lizba ocen: "</string>
+    <string name="average_label">"Srednia ocen: "</string>
+    <string name="oblicz_rednia">Oblicz średnia</string>
 </resources>

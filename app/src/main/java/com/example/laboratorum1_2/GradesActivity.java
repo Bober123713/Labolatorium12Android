@@ -12,9 +12,11 @@ import androidx.appcompat.app.AppCompatActivity;
 
 public class GradesActivity extends AppCompatActivity {
 
-    private TextView tvGrades;
+    private TextView tvGrades, tvAverage;
     private LinearLayout gradesLayout;
     private int gradesCount;
+    private static final String KEY_GRADES_SELECTION = "KEY_GRADES_SELECTION";
+    private int[] selectedGrades;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,19 +24,24 @@ public class GradesActivity extends AppCompatActivity {
         setContentView(R.layout.activity_grades);
 
         tvGrades = findViewById(R.id.tvGrades);
+        tvAverage = findViewById(R.id.tvAverage);
         gradesLayout = findViewById(R.id.gradesLayout);
 
         gradesCount = getIntent().getIntExtra("gradesCount", 5);
+        selectedGrades = new int[gradesCount];
+
+        if (savedInstanceState != null) {
+            selectedGrades = savedInstanceState.getIntArray(KEY_GRADES_SELECTION);
+        }
 
         tvGrades.setText(getString(R.string.lizba_ocen) + gradesCount);
 
         createGradeInputs(gradesCount);
 
-        Button btnSave = findViewById(R.id.btnSave);
-        btnSave.setOnClickListener(v -> {
+        Button btnCalculate = findViewById(R.id.btnCalculate);
+        btnCalculate.setOnClickListener(v -> {
             if (validateGrades()) {
-                // Save the grades or proceed as needed
-                Toast.makeText(this, "Oceny zapisane", Toast.LENGTH_SHORT).show();
+                calculateAverage();
             }
         });
     }
@@ -43,6 +50,7 @@ public class GradesActivity extends AppCompatActivity {
         for (int i = 0; i < count; i++) {
             RadioGroup radioGroup = new RadioGroup(this);
             radioGroup.setOrientation(RadioGroup.HORIZONTAL);
+            radioGroup.setId(View.generateViewId());
 
             RadioButton rb2 = new RadioButton(this);
             rb2.setText("2");
@@ -66,6 +74,18 @@ public class GradesActivity extends AppCompatActivity {
             radioGroup.addView(rb5);
 
             gradesLayout.addView(radioGroup);
+
+            if (selectedGrades[i] != 0) {
+                RadioButton selectedButton = radioGroup.findViewById(selectedGrades[i]);
+                if (selectedButton != null) {
+                    selectedButton.setChecked(true);
+                }
+            }
+
+            int finalI = i;
+            radioGroup.setOnCheckedChangeListener((group, checkedId) -> {
+                selectedGrades[finalI] = checkedId;
+            });
         }
     }
 
@@ -78,5 +98,22 @@ public class GradesActivity extends AppCompatActivity {
             }
         }
         return true;
+    }
+
+    private void calculateAverage() {
+        int total = 0;
+        for (int i = 0; i < gradesLayout.getChildCount(); i++) {
+            RadioGroup radioGroup = (RadioGroup) gradesLayout.getChildAt(i);
+            RadioButton selectedButton = findViewById(radioGroup.getCheckedRadioButtonId());
+            total += Integer.parseInt(selectedButton.getText().toString());
+        }
+        double average = (double) total / gradesCount;
+        tvAverage.setText(getString(R.string.average_label) + average);
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putIntArray(KEY_GRADES_SELECTION, selectedGrades);
     }
 }
