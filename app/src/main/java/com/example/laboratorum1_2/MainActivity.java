@@ -1,5 +1,6 @@
 package com.example.laboratorum1_2;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -65,6 +66,15 @@ public class MainActivity extends AppCompatActivity {
             // Re-validate fields without showing errors
             validateFields(true);
         }
+
+        btnSubmit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, GradesActivity.class);
+                intent.putExtra("gradesCount", Integer.parseInt(etGrades.getText().toString()));
+                startActivity(intent);
+            }
+        });
     }
 
     private void validateFields(boolean fromSavedState) {
