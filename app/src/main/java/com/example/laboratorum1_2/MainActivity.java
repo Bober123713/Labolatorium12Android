@@ -1,6 +1,5 @@
 package com.example.laboratorum1_2;
 
-
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -8,12 +7,19 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 public class MainActivity extends AppCompatActivity {
 
     private EditText etFirstName, etLastName, etGrades;
     private Button btnSubmit;
+
+    private static final String KEY_FIRST_NAME = "KEY_FIRST_NAME";
+    private static final String KEY_LAST_NAME = "KEY_LAST_NAME";
+    private static final String KEY_GRADES = "KEY_GRADES";
+    private static final String KEY_BUTTON_VISIBILITY = "KEY_BUTTON_VISIBILITY";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,7 +40,7 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void afterTextChanged(Editable s) {
-                validateFields();
+                validateFields(false);
             }
         };
 
@@ -50,9 +56,18 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+
+        if (savedInstanceState != null) {
+            etFirstName.setText(savedInstanceState.getString(KEY_FIRST_NAME));
+            etLastName.setText(savedInstanceState.getString(KEY_LAST_NAME));
+            etGrades.setText(savedInstanceState.getString(KEY_GRADES));
+            btnSubmit.setVisibility(savedInstanceState.getInt(KEY_BUTTON_VISIBILITY));
+            // Re-validate fields without showing errors
+            validateFields(true);
+        }
     }
 
-    private void validateFields() {
+    private void validateFields(boolean fromSavedState) {
         String firstName = etFirstName.getText().toString().trim();
         String lastName = etLastName.getText().toString().trim();
         String gradesStr = etGrades.getText().toString().trim();
@@ -61,12 +76,12 @@ public class MainActivity extends AppCompatActivity {
         boolean isLastNameValid = !lastName.isEmpty();
         boolean isGradesValid = validateGrades();
 
-        if (!isFirstNameValid) {
-            etFirstName.setError("Imię nie może być puste");
+        if (!isFirstNameValid && !fromSavedState) {
+            etFirstName.setError(getString(R.string.imi_nie_mo_e_by_puste));
         }
 
-        if (!isLastNameValid) {
-            etLastName.setError("Nazwisko nie może być puste");
+        if (!isLastNameValid && !fromSavedState) {
+            etLastName.setError(getString(R.string.nazwisko_nie_mo_e_by_puste));
         }
 
         if (isFirstNameValid && isLastNameValid && isGradesValid) {
@@ -80,7 +95,7 @@ public class MainActivity extends AppCompatActivity {
         String gradesStr = etGrades.getText().toString().trim();
 
         if (gradesStr.isEmpty()) {
-            etGrades.setError("Proszę podać liczbę ocen");
+            etGrades.setError(getString(R.string.prosz_poda_liczb_ocen));
             return false;
         }
 
@@ -88,16 +103,25 @@ public class MainActivity extends AppCompatActivity {
         try {
             grades = Integer.parseInt(gradesStr);
         } catch (NumberFormatException e) {
-            etGrades.setError("Błędna wartość");
+            etGrades.setError(getString(R.string.b_dna_warto));
             return false;
         }
 
         if (grades < 5 || grades > 15) {
-            etGrades.setError("Liczba ocen musi być z przedzialu 5-15");
-            Toast.makeText(MainActivity.this, "Liczba ocen musi być z przedzialu 5-15", Toast.LENGTH_SHORT).show();
+            etGrades.setError(getString(R.string.liczba_ocen_musi_by_z_przedzialu_5_15));
+            Toast.makeText(MainActivity.this, getString(R.string.liczba_ocen_musi_by_z_przedzialu_5_15), Toast.LENGTH_SHORT).show();
             return false;
         }
 
         return true;
+    }
+
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putString(KEY_FIRST_NAME, etFirstName.getText().toString());
+        outState.putString(KEY_LAST_NAME, etLastName.getText().toString());
+        outState.putString(KEY_GRADES, etGrades.getText().toString());
+        outState.putInt(KEY_BUTTON_VISIBILITY, btnSubmit.getVisibility());
     }
 }
