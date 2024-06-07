@@ -10,6 +10,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
 public class MainActivity extends AppCompatActivity {
@@ -75,6 +76,21 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+
+        btnSubmit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, GradesActivity.class);
+                intent.putExtra("gradesCount", Integer.parseInt(etGrades.getText().toString()));
+
+                // Get the subject names from strings.xml
+                String[] subjectNames = getResources().getStringArray(R.array.subject_names);
+                intent.putExtra("subjectNames", subjectNames);
+
+                startActivity(intent);
+            }
+        });
+
     }
 
     private void validateFields(boolean fromSavedState) {
@@ -134,4 +150,6 @@ public class MainActivity extends AppCompatActivity {
         outState.putString(KEY_GRADES, etGrades.getText().toString());
         outState.putInt(KEY_BUTTON_VISIBILITY, btnSubmit.getVisibility());
     }
+
+
 }

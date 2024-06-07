@@ -12,4 +12,24 @@
     <string name="lizba_ocen">"Lizba ocen: "</string>
     <string name="average_label">"Srednia ocen: "</string>
     <string name="oblicz_rednia">Oblicz średnia</string>
+
+    <string-array name="subject_names">
+        <item>Matematyka</item>
+        <item>Nauka</item>
+        <item>Historia</item>
+        <item>Język</item>
+        <item>Sztuka</item>
+        <item>Geografia</item>
+        <item>Biologia</item>
+        <item>Informatyka</item>
+        <item>Muzyka</item>
+        <item>Wychowanie fizyczne</item>
+        <item>Wiedza o społeczeństwie</item>
+        <item>Edukacja dla bezpieczeństwa</item>
+        <item>Religia lub etyka</item>
+        <item>Ekonomia</item>
+        <item>Filozofia</item>
+    </string-array>
+
+
 </resources>

@@ -18,6 +18,8 @@ public class GradesActivity extends AppCompatActivity {
     private static final String KEY_GRADES_SELECTION = "KEY_GRADES_SELECTION";
     private int[] selectedGrades;
 
+    private String[] subjectNames;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -28,6 +30,7 @@ public class GradesActivity extends AppCompatActivity {
         gradesLayout = findViewById(R.id.gradesLayout);
 
         gradesCount = getIntent().getIntExtra("gradesCount", 5);
+        subjectNames = getIntent().getStringArrayExtra("subjectNames");
         selectedGrades = new int[gradesCount];
 
         if (savedInstanceState != null) {
@@ -51,6 +54,10 @@ public class GradesActivity extends AppCompatActivity {
             RadioGroup radioGroup = new RadioGroup(this);
             radioGroup.setOrientation(RadioGroup.HORIZONTAL);
             radioGroup.setId(View.generateViewId());
+
+            TextView subjectName = new TextView(this);
+            subjectName.setText(subjectNames[i]);
+            radioGroup.addView(subjectName);
 
             RadioButton rb2 = new RadioButton(this);
             rb2.setText("2");
