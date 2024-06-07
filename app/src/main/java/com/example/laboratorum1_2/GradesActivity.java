@@ -1,5 +1,6 @@
 package com.example.laboratorum1_2;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -9,6 +10,7 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 
 public class GradesActivity extends AppCompatActivity {
 
@@ -24,6 +26,15 @@ public class GradesActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_grades);
+
+        // Set up the toolbar
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
+        // Enable the back button
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
 
         tvGrades = findViewById(R.id.tvGrades);
         tvAverage = findViewById(R.id.tvAverage);
@@ -116,11 +127,22 @@ public class GradesActivity extends AppCompatActivity {
         }
         double average = (double) total / gradesCount;
         tvAverage.setText(getString(R.string.average_label) + average);
+
+        Intent resultIntent = new Intent();
+        resultIntent.putExtra("average", average);
+        setResult(RESULT_OK, resultIntent);
+        finish();
     }
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putIntArray(KEY_GRADES_SELECTION, selectedGrades);
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
+        return true;
     }
 }

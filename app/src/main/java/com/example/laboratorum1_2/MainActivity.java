@@ -7,21 +7,24 @@ import android.text.TextWatcher;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
 public class MainActivity extends AppCompatActivity {
 
     private EditText etFirstName, etLastName, etGrades;
     private Button btnSubmit;
+    private TextView textViewAverage;
+    private Button resultButton;
 
     private static final String KEY_FIRST_NAME = "KEY_FIRST_NAME";
     private static final String KEY_LAST_NAME = "KEY_LAST_NAME";
     private static final String KEY_GRADES = "KEY_GRADES";
     private static final String KEY_BUTTON_VISIBILITY = "KEY_BUTTON_VISIBILITY";
+    private static final String KEY_AVERAGE = "KEY_AVERAGE";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,6 +35,8 @@ public class MainActivity extends AppCompatActivity {
         etLastName = findViewById(R.id.etLastName);
         etGrades = findViewById(R.id.etGrades);
         btnSubmit = findViewById(R.id.btnSubmit);
+        textViewAverage = findViewById(R.id.textViewAverage);
+        resultButton = findViewById(R.id.resultButton);
 
         TextWatcher textWatcher = new TextWatcher() {
             @Override
@@ -64,18 +69,10 @@ public class MainActivity extends AppCompatActivity {
             etLastName.setText(savedInstanceState.getString(KEY_LAST_NAME));
             etGrades.setText(savedInstanceState.getString(KEY_GRADES));
             btnSubmit.setVisibility(savedInstanceState.getInt(KEY_BUTTON_VISIBILITY));
+            textViewAverage.setText(savedInstanceState.getString(KEY_AVERAGE));
             // Re-validate fields without showing errors
             validateFields(true);
         }
-
-        btnSubmit.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, GradesActivity.class);
-                intent.putExtra("gradesCount", Integer.parseInt(etGrades.getText().toString()));
-                startActivity(intent);
-            }
-        });
 
         btnSubmit.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -87,7 +84,19 @@ public class MainActivity extends AppCompatActivity {
                 String[] subjectNames = getResources().getStringArray(R.array.subject_names);
                 intent.putExtra("subjectNames", subjectNames);
 
-                startActivity(intent);
+                startActivityForResult(intent, 1);
+            }
+        });
+
+        resultButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (resultButton.getText().equals(getString(R.string.super_positive))) {
+                    Toast.makeText(MainActivity.this, getString(R.string.congratulations_pass), Toast.LENGTH_LONG).show();
+                } else {
+                    Toast.makeText(MainActivity.this, getString(R.string.conditional_pass), Toast.LENGTH_LONG).show();
+                }
+                finish();
             }
         });
 
@@ -149,7 +158,23 @@ public class MainActivity extends AppCompatActivity {
         outState.putString(KEY_LAST_NAME, etLastName.getText().toString());
         outState.putString(KEY_GRADES, etGrades.getText().toString());
         outState.putInt(KEY_BUTTON_VISIBILITY, btnSubmit.getVisibility());
+        outState.putString(KEY_AVERAGE, textViewAverage.getText().toString());
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 1 && resultCode == RESULT_OK) {
+            double average = data.getDoubleExtra("average", 0.0);
+            textViewAverage.setText(getString(R.string.average_label) + average);
+            textViewAverage.setVisibility(View.VISIBLE);
 
+            if (average >= 3.0) {
+                resultButton.setText(getString(R.string.super_positive));
+            } else {
+                resultButton.setText(getString(R.string.not_good));
+            }
+            resultButton.setVisibility(View.VISIBLE);
+        }
+    }
 }
