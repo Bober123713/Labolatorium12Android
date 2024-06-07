@@ -165,8 +165,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == 1 && resultCode == RESULT_OK) {
-            double average = data.getDoubleExtra("average", 0.0);
-            textViewAverage.setText(getString(R.string.average_label) + average);
+            double average = data.getDoubleExtra("average", 0.00);
+            textViewAverage.setText(getString(R.string.average_label) + " " + average);
             textViewAverage.setVisibility(View.VISIBLE);
 
             if (average >= 3.0) {

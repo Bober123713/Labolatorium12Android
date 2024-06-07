@@ -126,13 +126,18 @@ public class GradesActivity extends AppCompatActivity {
             total += Integer.parseInt(selectedButton.getText().toString());
         }
         double average = (double) total / gradesCount;
-        tvAverage.setText(getString(R.string.average_label) + average);
+
+        // Format the average to 2 decimal places
+        String formattedAverage = String.format("%.2f", average);
+
+        tvAverage.setText(getString(R.string.average_label) + " " + formattedAverage);
 
         Intent resultIntent = new Intent();
         resultIntent.putExtra("average", average);
         setResult(RESULT_OK, resultIntent);
         finish();
     }
+
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
